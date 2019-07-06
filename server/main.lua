@@ -21,7 +21,6 @@ end)
 
 RegisterServerEvent('esx_garbagejob:requestpay')
 AddEventHandler('esx_garbagejob:requestpay', function(platenumber, amount)
-	print('recieved request to start pay: '..platenumber.." for "..amount)
 	TriggerClientEvent('esx_garbagejob:startpayrequest', -1, platenumber, amount)
 end)
 
