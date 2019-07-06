@@ -486,7 +486,6 @@ function retourcamionannulermission_oui()
 	MissionLivraison = false
 	livraisonnombre = 0
 	MissionRegion = 0
-	retourcamionannulermission_oui
 	iscurrentboss = false
 	donnerlapaye()
 end
