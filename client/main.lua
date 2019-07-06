@@ -77,7 +77,7 @@ RegisterNetEvent('esx_garbagejob:setbin')
 AddEventHandler('esx_garbagejob:setbin', function(binpos, platenumber,  bags)
 	if isInService then
 		if GetVehicleNumberPlateText(GetVehiclePedIsIn(GetPlayerPed(-1), false)) == platenumber then
-			work_truck = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+			iscurrentboss = false
 			platenumb = platenumber
 			trashcollectionpos = binpos
 			bagsoftrash = bags
@@ -87,7 +87,7 @@ AddEventHandler('esx_garbagejob:setbin', function(binpos, platenumber,  bags)
 			paused = true
 			CurrentActionMsg = ''
 			CollectionAction = 'collection'
-			iscurrentboss = false
+			work_truck = GetVehiclePedIsIn(GetPlayerPed(-1), false)
 		end
 	end
 end)
@@ -692,7 +692,10 @@ Citizen.CreateThread(function()
 					while work_truck == nil do
 						Citizen.Wait(100)
 					end
+					while not iscurrentboss do
+					Citizen.Wait(250)
 					iscurrentboss = true
+					end
 					SetVehicleDoorOpen(work_truck,5,false, false)
 
                 end
