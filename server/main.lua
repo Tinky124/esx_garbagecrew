@@ -57,7 +57,7 @@ end)
 RegisterServerEvent('esxgarbagejob:movetruckcount')
 AddEventHandler('esxgarbagejob:movetruckcount', function()
 	local currenttruckcount = Config.TruckPlateNumb + 1
-	if currenttruckcount == 1000 then currenttruckcount = 1 end
+	if currenttruckcount == 999 then currenttruckcount = 1 end
 	Config.TruckPlateNumb = currenttruckcount
 	TriggerClientEvent('esxgarbagejob:configset', -1,  Config.TruckPlateNumb)
 end)
