@@ -5,6 +5,7 @@ Config.TruckPrice	= 30     -- old config from orginal script not used in this ve
 Config.Locale       = 'en'
 Config.BagPay       = 25     -- Pay per bag pulled from bin.
 Config.MulitplyBags = true   -- Multiplies BagPay by number of workers - 4 max.
+Config.TruckPlateNumb = 0
 
 Config.Trucks = {
 	"trash",

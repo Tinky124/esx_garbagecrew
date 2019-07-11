@@ -46,3 +46,18 @@ AddEventHandler('esx_garbagejob:bagsdone', function(platenumber, bagstopay)
 	local xPlayer = ESX.GetPlayerFromId(_source)
 	TriggerClientEvent('esx_garbagejob:addbags', -1, platenumber, bagstopay, xPlayer )
 end)
+
+RegisterServerEvent('esx_garbagejob:setconfig')
+AddEventHandler('esx_garbagejob:setconfig', function()
+	_source = source
+	local currenttruckcount = Config.TruckPlateNumb
+	TriggerClientEvent('esxgarbagejob:configset', _source,  currenttruckcount)
+end)
+
+RegisterServerEvent('esxgarbagejob:movetruckcount')
+AddEventHandler('esxgarbagejob:movetruckcount', function()
+	local currenttruckcount = Config.TruckPlateNumb + 1
+	if currenttruckcount == 1000 then currenttruckcount = 1 end
+	Config.TruckPlateNumb = currenttruckcount
+	TriggerClientEvent('esxgarbagejob:configset', -1,  Config.TruckPlateNumb)
+end)

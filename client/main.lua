@@ -12,6 +12,7 @@ ESX = nil
 --------------------------------------------------------------------------------
 -- NE RIEN MODIFIER
 --------------------------------------------------------------------------------
+
 local completepaytable = nil
 local tableupdate = false
 local temppaytable =  nil
@@ -65,7 +66,13 @@ end)
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
-    PlayerData = xPlayer
+	PlayerData = xPlayer
+	TriggerServerEvent('esx_garbagejob:setconfig')
+end)
+
+RegisterNetEvent('esxgarbagejob:configset')
+AddEventHandler('esxgarbagejob:configset', function(trucknumber)
+	Config.TruckPlateNumb = trucknumber
 end)
 
 RegisterNetEvent('esx:setJob')
@@ -252,10 +259,21 @@ function MenuVehicleSpawner()
 		},
 		function(data, menu)
 			ESX.Game.SpawnVehicle(data.current.value, Config.Zones.VehicleSpawnPoint.Pos, 270.0, function(vehicle)
-				platenum = math.random(10000, 99999)
-				SetVehicleNumberPlateText(vehicle, "WAL"..platenum)             
+				local trucknumber = Config.TruckPlateNumb + 1
+				if trucknumber <=9 then
+					SetVehicleNumberPlateText(vehicle, 'TCREW00'..trucknumber)
+					plaquevehicule =   'TCREW00'..trucknumber 
+				elseif trucknumber <=99 then
+					SetVehicleNumberPlateText(vehicle, 'TCREW0'..trucknumber)
+					plaquevehicule =   'TCREW0'..trucknumber 
+				else
+					SetVehicleNumberPlateText(vehicle, 'TCREW'..trucknumber)
+					plaquevehicule =   'TCREW'..trucknumber 
+				end
+
+
+				TriggerServerEvent('esxgarbagejob:movetruckcount')   
                 MissionLivraisonSelect()
-				plaquevehicule = "WAL"..platenum
 				if data.current.value == 'phantom3' then
 					ESX.Game.SpawnVehicle("trailers2", Config.Zones.VehicleSpawnPoint.Pos, 270.0, function(trailer)
 					    AttachVehicleToTrailer(vehicle, trailer, 1.1)
@@ -341,7 +359,7 @@ AddEventHandler('esx_garbagejob:hasEnteredMarker', function(zone)
 		if isInService and MissionLivraison and IsJobgarbage() then
 			if IsPedSittingInAnyVehicle(playerPed) and IsATruck() then
 				VerifPlaqueVehiculeActuel()
-				
+				print('checking -'..plaquevehicule.."- : -"..plaquevehiculeactuel.."-")
 				if plaquevehicule == plaquevehiculeactuel then
                     CurrentAction     = 'retourcamionannulermission'
                     CurrentActionMsg  = _U('cancel_mission')
@@ -395,6 +413,7 @@ function nouvelledestination()
 	end
 	local temppayamount =  (destination.Paye + multibagpay) / (count + 1)
 	TriggerServerEvent('esx_garbagejob:requestpay', platenumb,  temppayamount)
+	TriggerServerEvent('esx_garbagejob:endcollection', platenumb)
 	livraisonTotalPaye = 0
 	totalbagpay = 0
 	temppayamount = 0
@@ -622,10 +641,10 @@ Citizen.CreateThread(function()
 					dist = Vdist(plyCoords.x, plyCoords.y, plyCoords.z, trashcollectionpos.x, trashcollectionpos.y, trashcollectionpos.z)
 					if dist <= 3.5 then
 						if currentbag > 0 then
-							TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
+							--TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
 							TriggerServerEvent('esx_garbagejob:bagremoval', platenumb)
 							trashcollection = false
-							Citizen.Wait(4000)
+							--Citizen.Wait(4000)
 							ClearPedTasks(PlayerPedId())
 							local randombag = math.random(0,2)
 							if randombag == 0 then
@@ -958,10 +977,8 @@ function MissionLivraisonStopRetourDepot()
 	
 end
 
-function SavePlaqueVehicule()
-	plaquevehicule = GetVehicleNumberPlateText(GetVehiclePedIsIn(GetPlayerPed(-1), false))
-end
 
-function VerifPlaqueVehiculeActuel()
+function VerifPlaqueVehiculeActuel() 
 	plaquevehiculeactuel = GetVehicleNumberPlateText(GetVehiclePedIsIn(GetPlayerPed(-1), false))
 end						
+
