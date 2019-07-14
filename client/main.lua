@@ -12,7 +12,7 @@ ESX = nil
 --------------------------------------------------------------------------------
 -- NE RIEN MODIFIER
 --------------------------------------------------------------------------------
-
+local binselected = false
 local completepaytable = nil
 local tableupdate = false
 local temppaytable =  nil
@@ -95,6 +95,7 @@ AddEventHandler('esx_garbagejob:setbin', function(binpos, platenumber,  bags)
 			CurrentActionMsg = ''
 			CollectionAction = 'collection'
 			work_truck = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+			binselected = true
 		end
 	end
 end)
@@ -359,7 +360,6 @@ AddEventHandler('esx_garbagejob:hasEnteredMarker', function(zone)
 		if isInService and MissionLivraison and IsJobgarbage() then
 			if IsPedSittingInAnyVehicle(playerPed) and IsATruck() then
 				VerifPlaqueVehiculeActuel()
-				print('checking -'..plaquevehicule.."- : -"..plaquevehiculeactuel.."-")
 				if plaquevehicule == plaquevehiculeactuel then
                     CurrentAction     = 'retourcamionannulermission'
                     CurrentActionMsg  = _U('cancel_mission')
@@ -420,7 +420,7 @@ function nouvelledestination()
 	temppaytable = nil
 	multibagpay = 0
 	iscurrentboss = false
-	
+	binselected = false
 	if livraisonnombre >= Config.MaxDelivery then
 		MissionLivraisonStopRetourDepot()
 	else
@@ -484,6 +484,7 @@ function retourcamionperdu_oui()
 	livraisonnombre = 0
 	MissionRegion = 0
 	iscurrentboss = false
+	binselected = false
 	donnerlapayesanscamion()
 end
 
@@ -506,6 +507,7 @@ function retourcamionannulermission_oui()
 	livraisonnombre = 0
 	MissionRegion = 0
 	iscurrentboss = false
+	binselected = false
 	donnerlapaye()
 end
 
@@ -528,6 +530,7 @@ function retourcamionperduannulermission_oui()
 	livraisonnombre = 0
 	MissionRegion = 0
 	iscurrentboss = false
+	binselected = false
 	donnerlapayesanscamion()
 end
 
@@ -608,7 +611,7 @@ end
 
 function SelectBinandCrew()
 	work_truck = GetVehiclePedIsIn(GetPlayerPed(-1), true)
-	bagsoftrash = math.random(2, 10)
+	bagsoftrash = math.random(4, 10)
 	local NewBin, NewBinDistance = ESX.Game.GetClosestObject(Config.DumpstersAvaialbe)
 	trashcollectionpos = GetEntityCoords(NewBin)
 	platenumb = GetVehicleNumberPlateText(GetVehiclePedIsIn(GetPlayerPed(-1), true))
@@ -641,10 +644,10 @@ Citizen.CreateThread(function()
 					dist = Vdist(plyCoords.x, plyCoords.y, plyCoords.z, trashcollectionpos.x, trashcollectionpos.y, trashcollectionpos.z)
 					if dist <= 3.5 then
 						if currentbag > 0 then
-							TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
+							--TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
 							TriggerServerEvent('esx_garbagejob:bagremoval', platenumb)
 							trashcollection = false
-							Citizen.Wait(4000)
+							--Citizen.Wait(4000)
 							ClearPedTasks(PlayerPedId())
 							local randombag = math.random(0,2)
 							if randombag == 0 then
@@ -704,11 +707,11 @@ Citizen.CreateThread(function()
 						truckdeposit = false
 						trashcollection = true
 					end
-				end  
+				end  		
 
 				if CurrentAction == 'delivery' then
 					SelectBinandCrew()
-					while work_truck == nil do
+					while not binselected do
 						Citizen.Wait(100)
 					end
 					while not iscurrentboss do
@@ -982,3 +985,10 @@ function VerifPlaqueVehiculeActuel()
 	plaquevehiculeactuel = GetVehicleNumberPlateText(GetVehiclePedIsIn(GetPlayerPed(-1), false))
 end						
 
+
+	
+	
+
+
+	
+	
