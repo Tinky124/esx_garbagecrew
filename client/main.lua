@@ -644,7 +644,7 @@ Citizen.CreateThread(function()
 							TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
 							TriggerServerEvent('esx_garbagejob:bagremoval', platenumb)
 							trashcollection = false
-							--Citizen.Wait(4000)
+							Citizen.Wait(4000)
 							ClearPedTasks(PlayerPedId())
 							local randombag = math.random(0,2)
 							if randombag == 0 then
